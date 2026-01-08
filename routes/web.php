@@ -24,8 +24,8 @@ Route::get('/register', [AuthController::class, 'showRegister'])->name('register
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
-// Storage route for serving images - must be before other routes
-Route::get('/storage/{path}', [StorageController::class, 'show'])
+// Storage route for serving images - use different path to avoid conflicts
+Route::get('/files/{path}', [StorageController::class, 'show'])
     ->where('path', '.*')
     ->name('storage.show');
 
