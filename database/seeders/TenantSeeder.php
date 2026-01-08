@@ -56,23 +56,36 @@ class TenantSeeder extends Seeder
             $profile = $tenantData['profile'];
             unset($tenantData['profile']);
             
-            $tenant = Tenant::create($tenantData);
-            $tenant->profile()->create($profile);
+            $tenant = Tenant::updateOrCreate(
+                ['email' => $tenantData['email']],
+                $tenantData
+            );
+            
+            // Update or create profile
+            if (!$tenant->profile) {
+                $tenant->profile()->create($profile);
+            } else {
+                $tenant->profile()->update($profile);
+            }
         }
 
-        // Create sample staff
-        Staff::create([
-            'name' => 'Sarah Wilson',
-            'role' => 'Maintenance',
-            'contact_number' => '+1234567896',
-            'email' => 'sarah@boardinghouse.com',
-        ]);
+        // Create sample staff (only if they don't exist)
+        Staff::updateOrCreate(
+            ['email' => 'sarah@boardinghouse.com'],
+            [
+                'name' => 'Sarah Wilson',
+                'role' => 'Maintenance',
+                'contact_number' => '+1234567896',
+            ]
+        );
 
-        Staff::create([
-            'name' => 'Tom Brown',
-            'role' => 'Receptionist',
-            'contact_number' => '+1234567897',
-            'email' => 'tom@boardinghouse.com',
-        ]);
+        Staff::updateOrCreate(
+            ['email' => 'tom@boardinghouse.com'],
+            [
+                'name' => 'Tom Brown',
+                'role' => 'Receptionist',
+                'contact_number' => '+1234567897',
+            ]
+        );
     }
 }
