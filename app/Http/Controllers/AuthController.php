@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\DB;
 use App\Models\Admin;
 use App\Models\Tenant;
 use App\Models\Staff;
@@ -85,24 +86,36 @@ class AuthController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:tenants,email,tenant_id',
+            'email' => 'required|string|email|max:255|unique:tenants,email',
             'password' => 'required|string|min:8|confirmed',
             'contact_number' => 'required|string|max:20',
+            'address' => 'nullable|string',
+            'emergency_contact' => 'nullable|string',
         ]);
 
-        $tenant = Tenant::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-            'contact_number' => $request->contact_number,
-        ]);
+        try {
+            DB::beginTransaction();
 
-        // Create profile
-        $tenant->profile()->create([
-            'address' => $request->address ?? '',
-            'emergency_contact' => $request->emergency_contact ?? '',
-        ]);
+            $tenant = Tenant::create([
+                'name' => $request->name,
+                'email' => $request->email,
+                'password' => Hash::make($request->password),
+                'contact_number' => $request->contact_number,
+            ]);
 
-        return redirect()->route('login')->with('success', 'Registration successful! Please login.');
+            // Create profile with required fields
+            $tenant->profile()->create([
+                'address' => $request->address ?? 'Not provided',
+                'emergency_contact' => $request->emergency_contact ?? $request->contact_number,
+            ]);
+
+            DB::commit();
+
+            return redirect()->route('login')->with('success', 'Registration successful! Please login.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            
+            return back()->withErrors(['email' => 'Registration failed. Please try again.'])->withInput();
+        }
     }
 }
