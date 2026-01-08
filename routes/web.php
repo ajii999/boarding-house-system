@@ -67,8 +67,7 @@ Route::middleware(['auth.admin'])->prefix('admin')->name('admin.')->group(functi
     Route::post('/maintenance', [MaintenanceController::class, 'store'])->name('maintenance.store');
     Route::get('/maintenance/{id}', [AdminController::class, 'showMaintenance'])->name('maintenance.show')->where('id', '[0-9]+');
     Route::get('/maintenance/{id}/edit', [MaintenanceController::class, 'edit'])->name('maintenance.edit')->where('id', '[0-9]+');
-    Route::put('/maintenance/{id}', [MaintenanceController::class, 'update'])->name('maintenance.update')->where('id', '[0-9]+');
-    Route::patch('/maintenance/{id}', [MaintenanceController::class, 'update'])->name('maintenance.update')->where('id', '[0-9]+');
+    Route::match(['put', 'patch'], '/maintenance/{id}', [MaintenanceController::class, 'update'])->name('maintenance.update')->where('id', '[0-9]+');
     Route::delete('/maintenance/{id}', [MaintenanceController::class, 'destroy'])->name('maintenance.destroy')->where('id', '[0-9]+');
     Route::post('/maintenance/{id}/assign', [MaintenanceController::class, 'assignToStaff'])->name('maintenance.assign')->where('id', '[0-9]+');
     Route::post('/maintenance/{id}/close', [MaintenanceController::class, 'closeRequest'])->name('maintenance.close')->where('id', '[0-9]+');
