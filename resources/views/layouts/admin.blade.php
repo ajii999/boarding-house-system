@@ -417,17 +417,25 @@
             display: none;
         }
         
+        .futuristic-header {
+            position: relative;
+            z-index: 1030;
+        }
+        
         .futuristic-header .dropdown {
             position: relative;
-            z-index: 1000;
+            z-index: 1031;
         }
         
         .futuristic-header .dropdown-menu {
             border-radius: 12px;
             box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1), 0 0 20px rgba(0, 102, 255, 0.1);
             animation: slideDown 0.3s ease-out;
-            z-index: 1001 !important;
+            z-index: 1050 !important;
             position: absolute !important;
+            top: 100% !important;
+            right: 0 !important;
+            left: auto !important;
         }
         
         @keyframes slideDown {
@@ -586,7 +594,7 @@
                         </div>
                         
                         <!-- Header Actions: User Dropdown -->
-                        <div class="dropdown">
+                        <div class="dropdown" style="position: relative;">
                             <button class="btn btn-neon btn-sm dropdown-toggle d-flex align-items-center gap-2" type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="border: none;">
                                 <div class="rounded-circle d-flex align-items-center justify-content-center" 
                                      style="width: 35px; height: 35px; background: linear-gradient(135deg, rgba(0, 102, 255, 0.2), rgba(124, 58, 237, 0.2)); border: 2px solid rgba(0, 102, 255, 0.3);">
@@ -630,7 +638,7 @@
             </header>
 
             <!-- Page Content: Main content area with padding -->
-            <main class="flex-grow-1 overflow-auto p-3 p-md-4" style="position: relative; z-index: 1; background: transparent;">
+            <main class="flex-grow-1 overflow-auto p-3 p-md-4" style="position: relative; z-index: 1; background: transparent; margin-top: 0;">
                 <!-- Success/Error Messages: Flash notifications -->
                 @if(session('success'))
                     <div class="alert alert-success alert-dismissible fade show futuristic-card" role="alert" style="border-color: rgba(34, 197, 94, 0.5);">

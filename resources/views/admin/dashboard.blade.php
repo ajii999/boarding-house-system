@@ -5,7 +5,7 @@
 
 @section('content')
 <!-- Futuristic Welcome Section -->
-<div class="mb-4 mb-md-5 futuristic-card p-4 p-md-5 position-relative stat-card" style="overflow: visible;">
+<div class="mb-4 mb-md-5 futuristic-card p-4 p-md-5 position-relative stat-card" style="overflow: visible; z-index: 1;">
     <div class="position-relative z-2">
         <div class="d-flex flex-column flex-md-row align-items-center justify-content-between">
             <div class="mb-3 mb-md-0">

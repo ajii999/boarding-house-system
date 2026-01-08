@@ -1,8 +1,10 @@
 #!/bin/bash
+set -e
 
 # Railway startup script
 # This runs migrations and seeders automatically on deployment
 
+echo "=== Railway Startup Script ==="
 echo "Running migrations..."
 php artisan migrate --force
 

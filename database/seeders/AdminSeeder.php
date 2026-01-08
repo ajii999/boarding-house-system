@@ -14,21 +14,15 @@ class AdminSeeder extends Seeder
      */
     public function run(): void
     {
-        // Check if admin already exists
-        $admin = Admin::where('email', 'admin@boardinghouse.com')->first();
-        
-        if (!$admin) {
-            Admin::create([
+        $admin = Admin::updateOrCreate(
+            ['email' => 'admin@boardinghouse.com'],
+            [
                 'master_id' => 'ADM001',
                 'name' => 'System Administrator',
-                'email' => 'admin@boardinghouse.com',
                 'password' => Hash::make('admin123'),
-            ]);
-        } else {
-            // Update password if admin exists but password might be wrong
-            $admin->update([
-                'password' => Hash::make('admin123'),
-            ]);
-        }
+            ]
+        );
+        
+        $this->command->info('Admin seeded: ' . $admin->email);
     }
 }
