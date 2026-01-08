@@ -26,12 +26,28 @@ class StorageController extends Controller
             
             // Check if file exists
             if (!Storage::disk('public')->exists($path)) {
-                \Log::warning('StorageController: File not found', [
+                // File doesn't exist - this is common on Railway due to ephemeral filesystem
+                // Return a placeholder image instead of 404
+                \Log::warning('StorageController: File not found (ephemeral filesystem issue)', [
                     'path' => $path,
                     'storage_path' => storage_path('app/public/' . $path),
                     'exists' => file_exists(storage_path('app/public/' . $path))
                 ]);
-                abort(404, 'File not found: ' . $path);
+                
+                // Return a placeholder SVG image
+                $placeholder = '<svg xmlns="http://www.w3.org/2000/svg" width="400" height="300" viewBox="0 0 400 300">
+                    <rect width="400" height="300" fill="#f0f0f0"/>
+                    <text x="50%" y="50%" text-anchor="middle" dy=".3em" fill="#999" font-family="Arial" font-size="16">
+                        File not found (ephemeral storage)
+                    </text>
+                    <text x="50%" y="60%" text-anchor="middle" dy=".3em" fill="#999" font-family="Arial" font-size="12">
+                        ' . htmlspecialchars($path) . '
+                    </text>
+                </svg>';
+                
+                return response($placeholder, 200)
+                    ->header('Content-Type', 'image/svg+xml')
+                    ->header('Cache-Control', 'no-cache');
             }
 
             $file = Storage::disk('public')->get($path);
