@@ -57,7 +57,7 @@ Route::middleware(['auth.admin'])->prefix('admin')->name('admin.')->group(functi
     Route::resource('tenants', AdminController::class);
     Route::get('/tenants/{tenant}/active-booking', [AdminController::class, 'getActiveBooking'])->name('tenants.active-booking');
     Route::resource('rooms', RoomController::class);
-    Route::resource('bookings', BookingController::class);
+    Route::resource('bookings', BookingController::class)->except(['show']);
     Route::resource('payments', PaymentController::class);
     Route::resource('payment-methods', PaymentMethodController::class);
     
