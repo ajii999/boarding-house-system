@@ -9,7 +9,12 @@ echo "=== Railway Startup Script ==="
 echo "Setting up storage..."
 mkdir -p storage/app/public/receipts
 mkdir -p storage/app/public/payment-receipts
-php artisan storage:link || true
+mkdir -p storage/app/public/maintenance_photos
+# Create symlink - remove existing first to avoid errors
+rm -f public/storage
+php artisan storage:link
+echo "Storage symlink created. Verifying..."
+ls -la public/ | grep storage || echo "WARNING: Storage symlink may not have been created"
 
 echo "Running migrations..."
 php artisan migrate --force
