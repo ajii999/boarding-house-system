@@ -75,22 +75,24 @@
                         if (!$receiptImage && $payment->booking && $payment->booking->payment_receipt) {
                             $receiptImage = $payment->booking->payment_receipt;
                         }
+                        // Use payment receipt route to serve from database
+                        $imageUrl = $payment->receipt_image ? route('payments.receipt', ['payment' => $payment->payment_id]) : null;
                     @endphp
-                    @if($receiptImage)
+                    @if($receiptImage && $imageUrl)
                     <div class="col-12">
                         <div class="mb-3">
                             <label class="small fw-semibold text-uppercase mb-2 d-block" style="color: var(--text-secondary);">Receipt Image</label>
                             <div class="d-flex align-items-center gap-3">
-                                <button onclick="openReceiptModal('{{ storage_url($receiptImage) }}')" 
+                                <button onclick="openReceiptModal('{{ $imageUrl }}')" 
                                         class="btn btn-sm btn-outline-primary">
                                     <i class="fas fa-file-image me-2"></i>View Full Size
                                 </button>
                                 <div class="position-relative" style="width: 150px; height: 150px;">
-                                    <img src="{{ storage_url($receiptImage) }}" 
+                                    <img src="{{ $imageUrl }}" 
                                          alt="Payment Receipt" 
                                          class="img-thumbnail w-100 h-100" 
                                          style="object-fit: cover; border-radius: 12px; border-color: rgba(0, 102, 255, 0.3); cursor: pointer; transition: opacity 0.3s;"
-                                         onclick="openReceiptModal('{{ storage_url($receiptImage) }}')"
+                                         onclick="openReceiptModal('{{ $imageUrl }}')"
                                          onmouseover="this.style.opacity='0.8'"
                                          onmouseout="this.style.opacity='1'">
                                 </div>
