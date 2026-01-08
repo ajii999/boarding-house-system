@@ -88,7 +88,8 @@
                                          style="object-fit: cover; border-radius: 12px; border-color: rgba(0, 102, 255, 0.3); cursor: pointer; transition: opacity 0.3s;"
                                          onclick="openReceiptModal('{{ Storage::url($payment->receipt_image) }}')"
                                          onmouseover="this.style.opacity='0.8'"
-                                         onmouseout="this.style.opacity='1'">
+                                         onmouseout="this.style.opacity='1'"
+                                         onerror="this.onerror=null; this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'150\' height=\'150\'%3E%3Crect width=\'150\' height=\'150\' fill=\'%23f0f0f0\'/%3E%3Ctext x=\'50%25\' y=\'50%25\' text-anchor=\'middle\' dy=\'.3em\' fill=\'%23999\'%3EImage not found%3C/text%3E%3C/svg%3E';">
                                 </div>
                             </div>
                         </div>

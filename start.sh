@@ -5,6 +5,12 @@ set -e
 # This runs migrations and seeders automatically on deployment
 
 echo "=== Railway Startup Script ==="
+
+echo "Setting up storage..."
+mkdir -p storage/app/public/receipts
+mkdir -p storage/app/public/payment-receipts
+php artisan storage:link || true
+
 echo "Running migrations..."
 php artisan migrate --force
 
