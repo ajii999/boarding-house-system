@@ -16,6 +16,10 @@ return Application::configure(basePath: dirname(__DIR__))
             'auth.tenant' => \App\Http\Middleware\TenantAuth::class,
             'auth.staff' => \App\Http\Middleware\StaffAuth::class,
         ]);
+        
+        // Trust Railway proxy headers for HTTPS detection
+        // This allows Laravel to detect HTTPS when behind Railway's proxy
+        $middleware->trustProxies(at: '*');
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //
