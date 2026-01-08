@@ -81,16 +81,16 @@
                         <div class="mb-3">
                             <label class="small fw-semibold text-uppercase mb-2 d-block" style="color: var(--text-secondary);">Receipt Image</label>
                             <div class="d-flex align-items-center gap-3">
-                                <button onclick="openReceiptModal('{{ Storage::url($receiptImage) }}')" 
+                                <button onclick="openReceiptModal('{{ storage_url($receiptImage) }}')" 
                                         class="btn btn-sm btn-outline-primary">
                                     <i class="fas fa-file-image me-2"></i>View Full Size
                                 </button>
                                 <div class="position-relative" style="width: 150px; height: 150px;">
-                                    <img src="{{ Storage::url($receiptImage) }}" 
+                                    <img src="{{ storage_url($receiptImage) }}" 
                                          alt="Payment Receipt" 
                                          class="img-thumbnail w-100 h-100" 
                                          style="object-fit: cover; border-radius: 12px; border-color: rgba(0, 102, 255, 0.3); cursor: pointer; transition: opacity 0.3s;"
-                                         onclick="openReceiptModal('{{ Storage::url($receiptImage) }}')"
+                                         onclick="openReceiptModal('{{ storage_url($receiptImage) }}')"
                                          onmouseover="this.style.opacity='0.8'"
                                          onmouseout="this.style.opacity='1'">
                                 </div>

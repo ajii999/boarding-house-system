@@ -11,6 +11,7 @@ use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\PaymentMethodController;
 use App\Http\Controllers\MaintenanceController;
 use App\Http\Controllers\ReportController;
+use App\Http\Controllers\StorageController;
 
 // Public routes
 Route::get('/', function () {
@@ -22,6 +23,9 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+
+// Storage route for serving images
+Route::get('/storage/{path}', [StorageController::class, 'show'])->where('path', '.*')->name('storage.show');
 
 // Password Reset Routes
 Route::get('/forgot-password', [App\Http\Controllers\PasswordResetController::class, 'showForgotPassword'])->name('password.request');

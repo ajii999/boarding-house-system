@@ -255,20 +255,20 @@
                     <div class="d-flex justify-content-between align-items-center mb-3">
                         <h4 class="small fw-semibold mb-0" style="color: var(--text-primary);">Receipt Screenshot</h4>
                         <div class="d-flex gap-2">
-                            <a href="{{ Storage::url($invoice->payment->receipt_image) }}" target="_blank" class="btn btn-sm" style="color: #0066ff;">
+                            <a href="{{ storage_url($invoice->payment->receipt_image) }}" target="_blank" class="btn btn-sm" style="color: #0066ff;">
                                 <i class="fas fa-external-link-alt me-1"></i>View Full Size
                             </a>
-                            <a href="{{ Storage::url($invoice->payment->receipt_image) }}" download class="btn btn-sm" style="color: #22c55e;">
+                            <a href="{{ storage_url($invoice->payment->receipt_image) }}" download class="btn btn-sm" style="color: #22c55e;">
                                 <i class="fas fa-download me-1"></i>Download
                             </a>
                         </div>
                     </div>
                     <div class="position-relative">
-                        <img src="{{ Storage::url($invoice->payment->receipt_image) }}" 
+                        <img src="{{ storage_url($invoice->payment->receipt_image) }}" 
                              alt="Payment Receipt" 
                              class="img-fluid rounded cursor-pointer"
                              style="max-height: 300px; object-fit: contain; border: 1px solid rgba(0, 102, 255, 0.2); filter: none !important; -webkit-filter: none !important;"
-                             onclick="openReceiptModal('{{ Storage::url($invoice->payment->receipt_image) }}')"
+                             onclick="openReceiptModal('{{ storage_url($invoice->payment->receipt_image) }}')"
                              data-bs-toggle="modal" data-bs-target="#receiptModal">
                     </div>
                     <p class="small mt-2 mb-0" style="color: var(--text-secondary);">

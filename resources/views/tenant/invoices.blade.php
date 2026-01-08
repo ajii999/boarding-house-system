@@ -223,11 +223,11 @@
                                             <div>Amount: ₱{{ number_format($invoice->payment->amount, 2) }}</div>
                                             @if($invoice->payment->receipt_image)
                                                 <div class="mt-2 d-flex gap-2">
-                                                    <button onclick="openReceiptModal('{{ asset('storage/' . $invoice->payment->receipt_image) }}')" 
+                                                    <button onclick="openReceiptModal('{{ storage_url($invoice->payment->receipt_image) }}')" 
                                                             class="btn btn-sm" style="background: linear-gradient(135deg, rgba(0, 212, 255, 0.2), rgba(0, 212, 255, 0.1)); border: 1px solid rgba(0, 212, 255, 0.3); color: #00d4ff;">
                                                         <i class="fas fa-eye me-1"></i>View Receipt
                                                     </button>
-                                                    <a href="{{ asset('storage/' . $invoice->payment->receipt_image) }}" download 
+                                                    <a href="{{ storage_url($invoice->payment->receipt_image) }}" download 
                                                        class="btn btn-sm" style="background: linear-gradient(135deg, rgba(34, 197, 94, 0.2), rgba(34, 197, 94, 0.1)); border: 1px solid rgba(34, 197, 94, 0.3); color: #22c55e;">
                                                         <i class="fas fa-download me-1"></i>Download
                                                     </a>
