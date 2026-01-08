@@ -297,20 +297,23 @@
                                     <div class="d-flex justify-content-between align-items-center mb-3">
                                         <h6 class="small fw-semibold mb-0" style="color: var(--text-primary);">Receipt Image</h6>
                                         <div class="d-flex gap-2">
-                                            <a href="{{ storage_url($payment->receipt_image) }}" target="_blank" class="btn btn-sm" style="color: #0066ff;">
+                                            @php
+                                                $paymentReceiptUrl = route('payments.receipt', ['payment' => $payment->payment_id]);
+                                            @endphp
+                                            <a href="{{ $paymentReceiptUrl }}" target="_blank" class="btn btn-sm" style="color: #0066ff;">
                                                 <i class="fas fa-external-link-alt me-1"></i>View Full Size
                                             </a>
-                                            <a href="{{ storage_url($payment->receipt_image) }}" download class="btn btn-sm" style="color: #22c55e;">
+                                            <a href="{{ $paymentReceiptUrl }}" download class="btn btn-sm" style="color: #22c55e;">
                                                 <i class="fas fa-download me-1"></i>Download
                                             </a>
                                         </div>
                                     </div>
                                     <div class="position-relative">
-                                        <img src="{{ storage_url($payment->receipt_image) }}" 
+                                        <img src="{{ $paymentReceiptUrl }}"
                                              alt="Payment Receipt" 
                                              class="img-fluid rounded cursor-pointer"
                                              style="max-height: 250px; width: 100%; object-fit: contain; border: 1px solid rgba(0, 102, 255, 0.2);"
-                                             onclick="openReceiptModal('{{ storage_url($payment->receipt_image) }}')"
+                                             onclick="openReceiptModal('{{ $paymentReceiptUrl }}')"
                                              data-bs-toggle="modal" data-bs-target="#receiptModal">
                                     </div>
                                     <p class="small mt-2 mb-0" style="color: var(--text-secondary);">

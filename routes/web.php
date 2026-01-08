@@ -29,6 +29,10 @@ Route::get('/files/{path}', [StorageController::class, 'show'])
     ->where('path', '.*')
     ->name('storage.show');
 
+// Payment receipt image route - serves from database
+Route::get('/payments/{payment}/receipt', [PaymentController::class, 'receiptImage'])
+    ->name('payments.receipt');
+
 // Password Reset Routes
 Route::get('/forgot-password', [App\Http\Controllers\PasswordResetController::class, 'showForgotPassword'])->name('password.request');
 Route::post('/forgot-password/find', [App\Http\Controllers\PasswordResetController::class, 'findAccount'])->name('password.find');

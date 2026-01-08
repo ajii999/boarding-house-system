@@ -77,16 +77,9 @@
                         <div class="mb-3">
                             <label class="small fw-semibold text-uppercase mb-2 d-block" style="color: var(--text-secondary);">Receipt Image</label>
                             @php
-                                $imageUrl = storage_url($payment->receipt_image);
-                                $fileExists = \Illuminate\Support\Facades\Storage::disk('public')->exists($payment->receipt_image);
+                                // Use payment receipt route to serve from database
+                                $imageUrl = route('payments.receipt', ['payment' => $payment->payment_id]);
                             @endphp
-                            @if(!$fileExists)
-                            <div class="alert alert-warning mb-2">
-                                <small><strong>Debug:</strong> File path: <code>{{ $payment->receipt_image }}</code><br>
-                                URL: <code>{{ $imageUrl }}</code><br>
-                                File exists: <strong>{{ $fileExists ? 'Yes' : 'No' }}</strong></small>
-                            </div>
-                            @endif
                             <div class="d-flex align-items-center gap-3">
                                 <button onclick="openReceiptModal('{{ $imageUrl }}')" 
                                         class="btn btn-sm btn-outline-primary">
@@ -103,12 +96,6 @@
                                          onerror="this.onerror=null; this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'150\' height=\'150\'%3E%3Crect width=\'150\' height=\'150\' fill=\'%23f0f0f0\'/%3E%3Ctext x=\'50%25\' y=\'50%25\' text-anchor=\'middle\' dy=\'.3em\' fill=\'%23999\'%3EImage not found%3C/text%3E%3C/svg%3E';">
                                 </div>
                             </div>
-                        </div>
-                    </div>
-                    @else
-                    <div class="col-12">
-                        <div class="alert alert-info">
-                            <small><strong>Debug:</strong> receipt_image column is NULL or empty for this payment.</small>
                         </div>
                     </div>
                     @endif

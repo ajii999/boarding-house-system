@@ -115,6 +115,61 @@ class PaymentController extends Controller
     }
 
     /**
+     * Serve receipt image from database
+     */
+    public function receiptImage(Payment $payment)
+    {
+        if (!$payment->receipt_image) {
+            abort(404, 'Receipt image not found');
+        }
+
+        // Check if receipt_image is a file path or binary data
+        // If it starts with 'receipts/' or contains a path, it's a file path
+        // Otherwise, assume it's binary data or base64 encoded
+        
+        if (strpos($payment->receipt_image, 'receipts/') === 0 || strpos($payment->receipt_image, '/') !== false) {
+            // It's a file path - try to serve from storage
+            if (Storage::disk('public')->exists($payment->receipt_image)) {
+                $file = Storage::disk('public')->get($payment->receipt_image);
+                $mimeType = Storage::disk('public')->mimeType($payment->receipt_image) ?? 'image/jpeg';
+                
+                return response($file, 200)
+                    ->header('Content-Type', $mimeType)
+                    ->header('Content-Disposition', 'inline')
+                    ->header('Cache-Control', 'public, max-age=31536000');
+            }
+        }
+        
+        // Try to decode as base64 first
+        $imageData = base64_decode($payment->receipt_image, true);
+        if ($imageData !== false && base64_encode($imageData) === $payment->receipt_image) {
+            // It's base64 encoded
+            $mimeType = 'image/jpeg'; // Default, could detect from data
+            return response($imageData, 200)
+                ->header('Content-Type', $mimeType)
+                ->header('Content-Disposition', 'inline')
+                ->header('Cache-Control', 'public, max-age=31536000');
+        }
+        
+        // Assume it's binary data stored directly
+        $imageData = $payment->receipt_image;
+        $mimeType = 'image/jpeg'; // Default
+        
+        // Try to detect mime type from binary data
+        $finfo = finfo_open(FILEINFO_MIME_TYPE);
+        $detectedMime = finfo_buffer($finfo, $imageData);
+        if ($detectedMime) {
+            $mimeType = $detectedMime;
+        }
+        finfo_close($finfo);
+        
+        return response($imageData, 200)
+            ->header('Content-Type', $mimeType)
+            ->header('Content-Disposition', 'inline')
+            ->header('Cache-Control', 'public, max-age=31536000');
+    }
+
+    /**
      * Show the form for editing the specified resource.
      */
     public function edit(Payment $payment)

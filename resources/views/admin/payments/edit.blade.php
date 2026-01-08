@@ -134,7 +134,7 @@
                                 <div class="mb-3">
                                     <p class="small mb-2" style="color: var(--text-secondary);">Current Receipt:</p>
                                     <div class="futuristic-card p-3 d-inline-block" style="border-color: rgba(0, 102, 255, 0.2);">
-                                        <img src="{{ storage_url($payment->receipt_image) }}" 
+                                        <img src="{{ route('payments.receipt', ['payment' => $payment->payment_id]) }}" 
                                              alt="Current Receipt" 
                                              class="img-thumbnail rounded" 
                                              style="width: 150px; height: 150px; object-fit: cover; border: 2px solid rgba(0, 102, 255, 0.3);">
