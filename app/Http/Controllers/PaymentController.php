@@ -115,7 +115,7 @@ class PaymentController extends Controller
     }
 
     /**
-     * Serve receipt image from database
+     * Serve receipt image from database or storage
      */
     public function receiptImage(Payment $payment)
     {
@@ -123,50 +123,103 @@ class PaymentController extends Controller
             abort(404, 'Receipt image not found');
         }
 
-        // Check if receipt_image is a file path or binary data
-        // If it starts with 'receipts/' or contains a path, it's a file path
-        // Otherwise, assume it's binary data or base64 encoded
+        $path = $payment->receipt_image;
         
-        if (strpos($payment->receipt_image, 'receipts/') === 0 || strpos($payment->receipt_image, '/') !== false) {
+        // Check if it's a file path (starts with receipts/ or contains /)
+        if (strpos($path, 'receipts/') === 0 || strpos($path, '/') !== false) {
             // It's a file path - try to serve from storage
-            if (Storage::disk('public')->exists($payment->receipt_image)) {
-                $file = Storage::disk('public')->get($payment->receipt_image);
-                $mimeType = Storage::disk('public')->mimeType($payment->receipt_image) ?? 'image/jpeg';
+            $fullPath = storage_path('app/public/' . $path);
+            
+            // First try Laravel Storage
+            if (Storage::disk('public')->exists($path)) {
+                $file = Storage::disk('public')->get($path);
+                $mimeType = Storage::disk('public')->mimeType($path) ?? $this->detectMimeType($file);
                 
                 return response($file, 200)
                     ->header('Content-Type', $mimeType)
                     ->header('Content-Disposition', 'inline')
                     ->header('Cache-Control', 'public, max-age=31536000');
             }
+            
+            // Try direct file system access (for persistent volumes)
+            if (file_exists($fullPath)) {
+                $file = file_get_contents($fullPath);
+                $mimeType = $this->detectMimeType($file) ?? 'image/jpeg';
+                
+                return response($file, 200)
+                    ->header('Content-Type', $mimeType)
+                    ->header('Content-Disposition', 'inline')
+                    ->header('Cache-Control', 'public, max-age=31536000');
+            }
+            
+            // File doesn't exist - log and return placeholder
+            \Log::warning('Payment receipt file not found', [
+                'payment_id' => $payment->payment_id,
+                'path' => $path,
+                'full_path' => $fullPath,
+                'storage_exists' => Storage::disk('public')->exists($path),
+                'file_exists' => file_exists($fullPath)
+            ]);
+            
+            // Return a helpful placeholder image
+            return $this->placeholderImage('File not found: ' . $path);
         }
         
-        // Try to decode as base64 first
-        $imageData = base64_decode($payment->receipt_image, true);
-        if ($imageData !== false && base64_encode($imageData) === $payment->receipt_image) {
+        // Try to decode as base64
+        $imageData = base64_decode($path, true);
+        if ($imageData !== false && strlen($imageData) > 100) {
             // It's base64 encoded
-            $mimeType = 'image/jpeg'; // Default, could detect from data
+            $mimeType = $this->detectMimeType($imageData) ?? 'image/jpeg';
             return response($imageData, 200)
                 ->header('Content-Type', $mimeType)
                 ->header('Content-Disposition', 'inline')
                 ->header('Cache-Control', 'public, max-age=31536000');
         }
         
-        // Assume it's binary data stored directly
-        $imageData = $payment->receipt_image;
-        $mimeType = 'image/jpeg'; // Default
+        // Assume it's binary data stored directly (unlikely with string column)
+        $mimeType = $this->detectMimeType($path) ?? 'image/jpeg';
         
-        // Try to detect mime type from binary data
-        $finfo = finfo_open(FILEINFO_MIME_TYPE);
-        $detectedMime = finfo_buffer($finfo, $imageData);
-        if ($detectedMime) {
-            $mimeType = $detectedMime;
-        }
-        finfo_close($finfo);
-        
-        return response($imageData, 200)
+        return response($path, 200)
             ->header('Content-Type', $mimeType)
             ->header('Content-Disposition', 'inline')
             ->header('Cache-Control', 'public, max-age=31536000');
+    }
+    
+    /**
+     * Detect MIME type from binary data
+     */
+    private function detectMimeType($data): ?string
+    {
+        if (function_exists('finfo_open')) {
+            $finfo = finfo_open(FILEINFO_MIME_TYPE);
+            $mimeType = finfo_buffer($finfo, $data);
+            finfo_close($finfo);
+            return $mimeType ?: null;
+        }
+        return null;
+    }
+    
+    /**
+     * Return a placeholder SVG image
+     */
+    private function placeholderImage(string $message): Response
+    {
+        $svg = '<svg xmlns="http://www.w3.org/2000/svg" width="400" height="300" viewBox="0 0 400 300">
+            <rect width="400" height="300" fill="#f0f0f0"/>
+            <text x="50%" y="45%" text-anchor="middle" dy=".3em" fill="#999" font-family="Arial" font-size="14">
+                Receipt Image Not Found
+            </text>
+            <text x="50%" y="55%" text-anchor="middle" dy=".3em" fill="#999" font-family="Arial" font-size="11">
+                ' . htmlspecialchars($message) . '
+            </text>
+            <text x="50%" y="65%" text-anchor="middle" dy=".3em" fill="#999" font-family="Arial" font-size="10">
+                File may have been lost due to ephemeral storage
+            </text>
+        </svg>';
+        
+        return response($svg, 200)
+            ->header('Content-Type', 'image/svg+xml')
+            ->header('Cache-Control', 'no-cache');
     }
 
     /**
