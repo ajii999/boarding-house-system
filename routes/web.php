@@ -24,8 +24,10 @@ Route::get('/register', [AuthController::class, 'showRegister'])->name('register
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
-// Storage route for serving images
-Route::get('/storage/{path}', [StorageController::class, 'show'])->where('path', '.*')->name('storage.show');
+// Storage route for serving images - must be before other routes
+Route::get('/storage/{path}', [StorageController::class, 'show'])
+    ->where('path', '.*')
+    ->name('storage.show');
 
 // Password Reset Routes
 Route::get('/forgot-password', [App\Http\Controllers\PasswordResetController::class, 'showForgotPassword'])->name('password.request');
