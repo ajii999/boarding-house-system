@@ -76,22 +76,39 @@
                     <div class="col-12">
                         <div class="mb-3">
                             <label class="small fw-semibold text-uppercase mb-2 d-block" style="color: var(--text-secondary);">Receipt Image</label>
+                            @php
+                                $imageUrl = storage_url($payment->receipt_image);
+                                $fileExists = \Illuminate\Support\Facades\Storage::disk('public')->exists($payment->receipt_image);
+                            @endphp
+                            @if(!$fileExists)
+                            <div class="alert alert-warning mb-2">
+                                <small><strong>Debug:</strong> File path: <code>{{ $payment->receipt_image }}</code><br>
+                                URL: <code>{{ $imageUrl }}</code><br>
+                                File exists: <strong>{{ $fileExists ? 'Yes' : 'No' }}</strong></small>
+                            </div>
+                            @endif
                             <div class="d-flex align-items-center gap-3">
-                                <button onclick="openReceiptModal('{{ storage_url($payment->receipt_image) }}')" 
+                                <button onclick="openReceiptModal('{{ $imageUrl }}')" 
                                         class="btn btn-sm btn-outline-primary">
                                     <i class="fas fa-file-image me-2"></i>View Full Size
                                 </button>
                                 <div class="position-relative" style="width: 150px; height: 150px;">
-                                    <img src="{{ storage_url($payment->receipt_image) }}" 
+                                    <img src="{{ $imageUrl }}" 
                                          alt="Payment Receipt" 
                                          class="img-thumbnail w-100 h-100" 
                                          style="object-fit: cover; border-radius: 12px; border-color: rgba(0, 102, 255, 0.3); cursor: pointer; transition: opacity 0.3s;"
-                                         onclick="openReceiptModal('{{ storage_url($payment->receipt_image) }}')"
+                                         onclick="openReceiptModal('{{ $imageUrl }}')"
                                          onmouseover="this.style.opacity='0.8'"
                                          onmouseout="this.style.opacity='1'"
                                          onerror="this.onerror=null; this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'150\' height=\'150\'%3E%3Crect width=\'150\' height=\'150\' fill=\'%23f0f0f0\'/%3E%3Ctext x=\'50%25\' y=\'50%25\' text-anchor=\'middle\' dy=\'.3em\' fill=\'%23999\'%3EImage not found%3C/text%3E%3C/svg%3E';">
                                 </div>
                             </div>
+                        </div>
+                    </div>
+                    @else
+                    <div class="col-12">
+                        <div class="alert alert-info">
+                            <small><strong>Debug:</strong> receipt_image column is NULL or empty for this payment.</small>
                         </div>
                     </div>
                     @endif
